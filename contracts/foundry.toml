@@ -12,7 +12,10 @@ remappings = [
   "forge-std/=lib/forge-std/src/",
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
 ]
-fs_permissions = [{ access = "read", path = "../docs/build-pack/08-reference/schemas" }]
+fs_permissions = [
+  { access = "read", path = "../docs/build-pack/08-reference/schemas" },
+  { access = "read", path = "./out" },
+]
 
 [fuzz]
 runs = 1000
@@ -21,6 +24,7 @@ runs = 1000
 runs = 256
 depth = 100
 fail_on_revert = false
+show_metrics = true
 
 [fmt]
 line_length = 110

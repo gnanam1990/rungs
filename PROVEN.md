@@ -92,3 +92,19 @@ Decision: keeper uses publicnode, `LOG_CHUNK=5000`, halves the chunk on any erro
 | `pnpm --filter @rungs/core test` (`vitest run --coverage`, typecheck on) | 0 | 94 tests passed, 0 type errors; `ladder.ts` 100% statements, branches, functions, lines (istanbul, enforced as a threshold) |
 | shared vectors | — | all 28 `limit`, 9 `fee`, 7 `phase`, 5 `due`, 25 `onRepay`, 4 `onWriteOff`, 8 `slashSplit`, 6 `feeSplit` pass |
 | fast-check properties | — | 3 properties × 2,000 runs |
+
+## M03 — pool contracts
+
+| Command | Exit | Result |
+|---|---|---|
+| `forge build` before `LadderLib.sol` existed | 1 | `Source "src/LadderLib.sol" not found` (vector test written first) |
+| `forge test` | 0 | 72 passed, 2 skipped (fork suites without RPC), 12 suites |
+| `BSC_RPC_URL=https://bsc-rpc.publicnode.com forge test --match-contract "ForkTest\|RegistryFork"` | 0 | 4 passed: real holder `cxxxz` opens, draws 1 real USDT, repays 1.01 after 24 h, reaches rung 1; a non-holder is refused (T-F01, T-F02) |
+| invariants I1–I9 | 0 | 9 passed, 256 runs × 100 depth = 25,600 calls each, **0 reverts** with `fail-on-revert = true`. Reachability probed: draw, climb, repay, repayFor, writeOff, vouch, unvouch, slash+cure, claim, executeCaps all occur in runs |
+| T-L01 vectors | 0 | 28 limit, 9 fee, 7 phase, 5 due, 25 onRepay, 4 onWriteOff, 8 slashSplit, 6 feeSplit — same vectors as `packages/core` (I10) |
+| T-L02 fuzz | 0 | LadderLib vs an independent reference, 10,000 runs each for limits/fees, onRepay, slashSplit |
+| `forge coverage --no-match-coverage "(test\|script\|spikes)" --ir-minimum` | 0 | `RungsPool` 99.59% lines, 94.12% branches, 100% functions; `LadderLib` 98.70% lines, 100% branches |
+| `forge build --sizes` | 0 | `RungsPool` runtime 14,542 bytes (limit 24,576) |
+| `slither .` (0.11.6, src only, no informational) | 0 | 14 results, all `incorrect-equality` on existence checks or `timestamp` on day-long windows; explained in `SECURITY.md` |
+
+Gas (`forge test --match-contract PoolTest --gas-report`, median): `openLine` 80,649 · `draw` 130,255 · `repay` 72,676 · `repayFor` 86,820 · `writeOff` 93,562.
