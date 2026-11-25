@@ -134,3 +134,18 @@ Not done: [HUMAN] the owner's agent completing a draw using only `SKILL.md` and 
 Bug found and fixed: viem caches `getBlockNumber`, so after a chain rewind `readPool` asked for a block that no longer existed. `readPool` now fetches `latest` directly.
 
 Not done: [HUMAN] keeper hosting and the mainnet replay hash (needs M04 deployed and a host account).
+
+## M07 — web app
+
+| Command | Exit | Result |
+|---|---|---|
+| `pnpm --filter @rungs/web e2e` (vite build + Playwright, desktop 1440×900 and phone 390×844, API mocked) | 0 | 124 passed: T-W01 … T-W12 |
+| throw-away spec with a 620 px element (deleted after) | 1 | phone project failed as it must: `Expected <= 390, Received 636` |
+| `pnpm --filter @rungs/web test` | 0 | 5 passed (copy lint over every string in `strings.ts`, format) |
+| `vite build` | 0 | JS 189 KB (59 KB gzip); CSP meta: `default-src 'self'`, `connect-src` the keeper only, no inline scripts |
+
+Bugs the tests found and that were fixed: `overflow-x: hidden` on `html`/`body` masked overflow (the 620 px proof first passed); transaction hashes were not shortened and widened the phone page to 587 px; single-column grids grew to content width; the address field's error text sat inside its `<label>` and changed its accessible name; scrollable tables were not keyboard-focusable (axe `scrollable-region-focusable`).
+
+Screenshots (every route and every `/line` state, both widths): branch `assets/m07-screenshots`, e.g. [phone line, late](https://raw.githubusercontent.com/gnanam1990/rungs/assets/m07-screenshots/m07/phone-line-late.jpg), [desktop home](https://raw.githubusercontent.com/gnanam1990/rungs/assets/m07-screenshots/m07/desktop-home.jpg).
+
+Not done: Lighthouse scores (cut list item 5); [HUMAN] hosting, domain, and the "List Your dApp" application.
