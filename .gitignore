@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+node_modules
+out
+cache
+broadcast/**/dry-run
+*.sqlite
+*.sqlite-*
+dist
+data/
+coverage
+playwright-report
+test-results
+.DS_Store

@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /v1/stats",
+  "type": "object",
+  "required": [
+    "all",
+    "excludingTeam",
+    "pool",
+    "asOfBlock"
+  ],
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "holders",
+        "linesOpened",
+        "loansDrawn",
+        "repaidOnTime",
+        "repaidLate",
+        "writtenOff",
+        "cured",
+        "promotions",
+        "vouches",
+        "transactions",
+        "volumeDrawn",
+        "byRung"
+      ],
+      "properties": {
+        "holders": {
+          "type": "integer",
+          "description": "distinct Agent ID addresses that sent any transaction to the pool"
+        },
+        "linesOpened": {
+          "type": "integer"
+        },
+        "loansDrawn": {
+          "type": "integer"
+        },
+        "repaidOnTime": {
+          "type": "integer"
+        },
+        "repaidLate": {
+          "type": "integer"
+        },
+        "writtenOff": {
+          "type": "integer"
+        },
+        "cured": {
+          "type": "integer"
+        },
+        "promotions": {
+          "type": "integer"
+        },
+        "vouches": {
+          "type": "integer"
+        },
+        "transactions": {
+          "type": "integer"
+        },
+        "volumeDrawn": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "byRung": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "required": [
+              "level",
+              "holdersNow",
+              "drawn",
+              "writtenOff",
+              "lossPrincipal"
+            ],
+            "properties": {
+              "level": {
+                "type": "integer"
+              },
+              "holdersNow": {
+                "type": "integer"
+              },
+              "drawn": {
+                "type": "integer"
+              },
+              "writtenOff": {
+                "type": "integer"
+              },
+              "lossPrincipal": {
+                "type": "string",
+                "pattern": "^[0-9]+$",
+                "description": "wei, decimal string (18 decimals)"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "all": {
+      "$ref": "#/$defs/counts"
+    },
+    "excludingTeam": {
+      "$ref": "#/$defs/counts"
+    },
+    "pool": {
+      "type": "object",
+      "required": [
+        "idle",
+        "reserve",
+        "outstanding",
+        "totalStaked",
+        "socialisedLoss",
+        "maxOutstanding",
+        "dailyNewLineCap",
+        "paused"
+      ],
+      "properties": {
+        "idle": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "reserve": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "outstanding": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "totalStaked": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "socialisedLoss": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "maxOutstanding": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "dailyNewLineCap": {
+          "type": "integer"
+        },
+        "newLinesToday": {
+          "type": "integer"
+        },
+        "paused": {
+          "type": "boolean"
+        },
+        "queuedCapRaise": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "asOfBlock": {
+      "type": "integer"
+    }
+  }
+}

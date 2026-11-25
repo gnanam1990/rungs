@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /v1/public/site",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "blocked",
+    "mode"
+  ],
+  "properties": {
+    "blocked": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "paused",
+        "comingSoon"
+      ]
+    },
+    "notice": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

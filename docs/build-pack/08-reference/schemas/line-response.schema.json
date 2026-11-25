@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /v1/lines/:address",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "address",
+    "holdsAgentId",
+    "hasLine",
+    "nextStep",
+    "asOfBlock"
+  ],
+  "properties": {
+    "address": {
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{40}$"
+    },
+    "holdsAgentId": {
+      "type": "boolean"
+    },
+    "handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "untrusted user text; escape before rendering"
+    },
+    "hasLine": {
+      "type": "boolean"
+    },
+    "standing": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "streak",
+        "repaid",
+        "late",
+        "defaults",
+        "frozen",
+        "need"
+      ],
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "streak": {
+          "type": "integer"
+        },
+        "repaid": {
+          "type": "integer"
+        },
+        "late": {
+          "type": "integer"
+        },
+        "defaults": {
+          "type": "integer"
+        },
+        "frozen": {
+          "type": "boolean"
+        },
+        "need": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      }
+    },
+    "limit": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "wei, decimal string (18 decimals)"
+    },
+    "rungLimit": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "wei, decimal string (18 decimals)"
+    },
+    "vouched": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "wei, decimal string (18 decimals)"
+    },
+    "loan": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "principal",
+        "fee",
+        "drawnAt",
+        "dueAt",
+        "writeOffAt",
+        "phase",
+        "dueNow",
+        "lateFee"
+      ],
+      "properties": {
+        "principal": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "fee": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "lateFee": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "dueNow": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "wei, decimal string (18 decimals)"
+        },
+        "drawnAt": {
+          "type": "integer"
+        },
+        "dueAt": {
+          "type": "integer"
+        },
+        "writeOffAt": {
+          "type": "integer"
+        },
+        "promotesAfter": {
+          "type": "integer",
+          "description": "drawnAt + MIN_HOLD"
+        },
+        "phase": {
+          "enum": [
+            "current",
+            "late",
+            "defaultable",
+            "writtenOff"
+          ]
+        }
+      }
+    },
+    "nextStep": {
+      "enum": [
+        "claimAgentId",
+        "open",
+        "draw",
+        "repay",
+        "cure",
+        "wait",
+        "none"
+      ]
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "tx",
+          "block",
+          "time",
+          "text"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "tx": {
+            "type": "string"
+          },
+          "block": {
+            "type": "integer"
+          },
+          "time": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "vouchesIn": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "voucher",
+          "amount"
+        ],
+        "properties": {
+          "voucher": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "wei, decimal string (18 decimals)"
+          }
+        }
+      }
+    },
+    "vouchesOut": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "borrower",
+          "amount"
+        ],
+        "properties": {
+          "borrower": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "wei, decimal string (18 decimals)"
+          }
+        }
+      }
+    },
+    "claimable": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "wei, decimal string (18 decimals)"
+    },
+    "asOfBlock": {
+      "type": "integer"
+    }
+  }
+}
