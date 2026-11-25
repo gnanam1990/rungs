@@ -234,8 +234,8 @@ contract RungsPool is IRungsStanding, Ownable2Step, ReentrancyGuard {
     }
 
     /// @notice Stakes `amount` USDT behind `borrower`, raising their limit. Caller: a holder at rung 2 or higher
-    ///         who is not frozen. Pulls `amount` from the caller. The stake is lost first if the borrower is
-    ///         written off.
+    ///         who is not frozen, for a borrower who is not frozen. Pulls `amount` from the caller. The stake is lost
+    ///         first if the borrower is written off, and what is left stays locked until the borrower cures.
     function vouch(address borrower, uint256 amount) external nonReentrant whenNotPaused {
         if (borrower == msg.sender) revert SelfVouch();
         if (registry.balanceOf(msg.sender) == 0) revert NotAgentId();
@@ -244,6 +244,7 @@ contract RungsPool is IRungsStanding, Ownable2Step, ReentrancyGuard {
         if (me.frozen) revert Frozen();
         if (me.level < LadderLib.MIN_VOUCH_LEVEL) revert VouchLevel();
         if (lineOf[borrower].openedAt == 0) revert NoLine();
+        if (lineOf[borrower].frozen) revert Frozen(); // a stake there could only sit locked until a cure (M09 F-01)
         if (amount < LadderLib.MIN_STAKE) revert BelowMin();
         if (vouchedFor[borrower] + amount > LadderLib.MAX_VOUCHED) revert VouchCap();
         if (stakeOf[msg.sender][borrower] == 0) {

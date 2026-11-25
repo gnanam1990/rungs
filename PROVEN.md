@@ -161,3 +161,18 @@ Not done: Lighthouse scores (cut list item 5); [HUMAN] hosting, domain, and the 
 | `pnpm --filter @rungs/web e2e` | 0 | 126 passed (adds: `INTEGRATE.md` linked from the footer and `/agents`) |
 
 Not done: [HUMAN] the mainnet vouch cycle between two real holders (needs M04 deployed); [HUMAN] one message each to three hackathon teams offering the snippet; the `/vouch` wallet path (cut, D34).
+
+## M09 — security review (offline part)
+
+| Command | Exit | Result |
+|---|---|---|
+| `forge test --match-contract RedTeamTest` before the fix | 1 | T-R01 … T-R10 pass; `test_F01_cannotVouchForFrozenLine` fails (finding F-01 confirmed) |
+| `forge test` after the fix | 0 | 88 passed, 2 skipped (fork suites without RPC) |
+| `FOUNDRY_FUZZ_RUNS=10000 FOUNDRY_INVARIANT_RUNS=1000 FOUNDRY_INVARIANT_DEPTH=200 forge test` | 0 | 88 passed in 118 s; each invariant I1–I9: 1,000 runs, 200,000 calls, **0 reverts** |
+| `BSC_RPC_URL=https://bsc-rpc.publicnode.com forge test --match-contract "ForkTest\|RegistryFork"` | 0 | 4 passed |
+| `slither .` (src only, no informational) | 0 | 14 results, same categories as M03, all explained in `SECURITY.md` |
+| `forge build --sizes` | 0 | `RungsPool` 14,609 bytes |
+| `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 40, skill 24, keeper 21, web 5 |
+| banned-phrase check over `README.md`, `SECURITY.md`, `OWNER-PERMISSIONS.md`, `docs/INTEGRATE.md` | 0 | none found |
+
+Not done: [HUMAN] review live numbers and decide caps; queue, fund and execute the cap raise (needs M04).

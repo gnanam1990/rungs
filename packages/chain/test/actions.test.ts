@@ -276,6 +276,8 @@ describe("vouch, unvouch, claim", () => {
     expect(planAction("vouch", snap(at2, {}, holder(BOB)), { amount: 6n * U })).toMatchObject({
       code: "BadInput",
     });
+    const frozenBob = holder(BOB, { line: { ...holder(BOB).line, frozen: true } });
+    expect(planAction("vouch", snap(at2, {}, frozenBob), { amount: U })).toMatchObject({ code: "VouchRule" });
   });
   it("unvouch is locked while the borrower has a loan", () => {
     const b = { ...withLoan(holder(BOB), U), vouchesIn: [{ voucher: ME, amount: 3n * U }] };

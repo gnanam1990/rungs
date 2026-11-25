@@ -58,7 +58,7 @@ Each action works the same way:
 | `draw` | `nextStep` is `draw` | `amount` in USDT, e.g. `amount=1` (default: the full limit) | "Borrow {amount} USDT. Repay {total} USDT by {date}. Late adds {lateFee} USDT. After {writeOffDate} the loan is written off and marked on your name." Also: loans repaid within 24 hours do not count towards the next rung. |
 | `approve` | before `repay` (or before `vouch`, with `purpose=vouch&amount=N&borrower=0x…`) | `borrower=0x…` to pay for someone else | "This approval is for exactly {due} USDT, for this one repayment." |
 | `repay` | `nextStep` is `repay` or `cure`, after `approve` | `borrower=0x…` to pay for someone else | The amount and the outcome in the summary (promoted, on time, early, small, late, or cure). |
-| `vouch` | the user is at rung 2+, after `approve` with `purpose=vouch` | `borrower=0x…&amount=N` | "Stake {amount} USDT behind {address}. If their loan is written off, your stake is taken first." |
+| `vouch` | the user is at rung 2+, after `approve` with `purpose=vouch` | `borrower=0x…&amount=N` | "Stake {amount} USDT behind {address}. If their loan is written off, your stake is taken first, and whatever is left stays locked until they pay what they owe." |
 | `unvouch` | the borrower has no open loan | `borrower=0x…&amount=N` | How much comes back. |
 | `claim` | `claimable` is above 0 | — | How much comes back. |
 
