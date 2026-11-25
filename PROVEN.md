@@ -83,3 +83,12 @@ Decision: keeper uses publicnode, `LOG_CHUNK=5000`, halves the chunk on any erro
 | S5 BscScan verification command | ⚠ not run — needs the owner's API key |
 | S6 submission and listing form fields | ⚠ not run |
 | S7 Developer Mode balance cap and daily limit | ⚠ not run |
+
+## M02 — ladder core
+
+| Command | Exit | Result |
+|---|---|---|
+| `npx vitest run` in `packages/core` before `ladder.ts` existed | 1 | 35 failed: `fee is not a function`, `slashSplit is not a function` … |
+| `pnpm --filter @rungs/core test` (`vitest run --coverage`, typecheck on) | 0 | 94 tests passed, 0 type errors; `ladder.ts` 100% statements, branches, functions, lines (istanbul, enforced as a threshold) |
+| shared vectors | — | all 28 `limit`, 9 `fee`, 7 `phase`, 5 `due`, 25 `onRepay`, 4 `onWriteOff`, 8 `slashSplit`, 6 `feeSplit` pass |
+| fast-check properties | — | 3 properties × 2,000 runs |
