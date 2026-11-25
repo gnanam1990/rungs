@@ -82,6 +82,9 @@ export function Layout({
             <a href={REPO_URL} rel="noreferrer" target="_blank">
               {S.footer.repo}
             </a>
+            <a href={`${REPO_URL}/blob/main/docs/INTEGRATE.md`} rel="noreferrer" target="_blank">
+              {S.footer.integrate}
+            </a>
           </div>
         </div>
       </footer>

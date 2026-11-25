@@ -15,7 +15,6 @@
     "build": "esbuild src/cli.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/rungs.mjs"
   },
   "dependencies": {
-    "@rungs/chain": "workspace:*",
     "@rungs/core": "workspace:*",
     "viem": "2.21.55"
   },
@@ -24,6 +23,7 @@
   },
   "files": ["dist", "SKILL.md", "llms.txt.tmpl", "prompts"],
   "devDependencies": {
+    "@rungs/chain": "workspace:*",
     "esbuild": "0.24.2"
   }
 }
