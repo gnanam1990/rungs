@@ -27,6 +27,8 @@ export interface LineResponse {
   } | null;
   limit: string;
   rungLimit: string;
+  /** what the pool can lend right now (the limit, cut to the pool's free money and lending cap) */
+  drawNow: string;
   vouched: string;
   loan: {
     principal: string;

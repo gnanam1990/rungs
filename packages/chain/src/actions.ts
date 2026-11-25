@@ -42,7 +42,8 @@ export type RefusalCode =
   | "VouchRule"
   | "StakeLocked"
   | "NothingToClaim"
-  | "BadInput";
+  | "BadInput"
+  | "NotOpenYet";
 
 export interface ActionOk {
   ok: true;
@@ -108,6 +109,22 @@ export function currentLimit(h: HolderSnapshot): bigint {
   return limitOf(h.line.level, h.vouchedFor);
 }
 
+/**
+ * What the pool can lend this holder right now: the limit, cut to the pool's idle money and to the room under the
+ * lending cap. 0 when nothing can be drawn (paused, no line, frozen, a loan open, no Agent ID, today's first-borrower
+ * cap reached) or when less than the smallest loan fits. The site fills this in; the planner defaults to it.
+ */
+export function drawableNow(s: Snapshot): bigint {
+  const { me, pool } = s;
+  if (pool.paused || !me.holdsAgentId || hasLoan(me)) return 0n;
+  if (!me.line.everDrawn && pool.newLinesToday >= pool.dailyNewLineCap) return 0n;
+  const room = pool.maxOutstanding > pool.outstanding ? pool.maxOutstanding - pool.outstanding : 0n;
+  let n = currentLimit(me);
+  if (pool.idle < n) n = pool.idle;
+  if (room < n) n = room;
+  return n < MIN_DRAW ? 0n : n;
+}
+
 function outcomeText(h: HolderSnapshot, now: bigint): string {
   const r = onRepay(h.line, terms(h), now);
   switch (r.outcome) {
@@ -161,7 +178,8 @@ export function planAction(action: Action, s: Snapshot, params: ActionParams): A
         );
       if (hasLoan(me)) return no("LoanOpen", "There is already an open loan. Repay it first.");
       const lim = currentLimit(me);
-      const amount = params.amount ?? lim;
+      const now_ = drawableNow(s);
+      const amount = params.amount ?? (now_ > 0n ? now_ : lim);
       if (amount < MIN_DRAW) return no("BelowMin", `The smallest loan is ${usdt(MIN_DRAW)}.`);
       if (amount > lim) return no("AboveLimit", `Your limit is ${usdt(lim)}.`);
       if (amount > pool.idle) return no("PoolShort", `The pool has ${usdt(pool.idle)} available right now.`);

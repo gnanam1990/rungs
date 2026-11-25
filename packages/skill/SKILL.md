@@ -38,7 +38,7 @@ GET {{KEEPER_URL}}/v1/lines/<me>
 ```
 or, without the API: `rungs line <me>`.
 
-Fields: `holdsAgentId`; `hasLine`; `standing.level` (rung 0–6), `standing.repaid`, `standing.late`, `standing.defaults`, `standing.frozen`, `standing.need` (qualifying repayments needed per rung: 1, or 2–3 after a default); `limit` and `vouched` (wei strings, 18 decimals); `loan` with `principal`, `fee`, `lateFee`, `dueNow`, `dueAt`, `writeOffAt`, `promotesAfter`, `phase` (`current`, `late`, `defaultable`, `writtenOff`); `nextStep` (`claimAgentId`, `open`, `draw`, `repay`, `cure`, `wait`, `none`). Times are Unix seconds; show them in the user's own timezone.
+Fields: `holdsAgentId`; `hasLine`; `standing.level` (rung 0–6), `standing.repaid`, `standing.late`, `standing.defaults`, `standing.frozen`, `standing.need` (qualifying repayments needed per rung: 1, or 2–3 after a default); `limit` and `vouched` (wei strings, 18 decimals); `drawNow` (wei string: what the pool can lend this holder right now, never more than `limit`; offer this amount); `loan` with `principal`, `fee`, `lateFee`, `dueNow`, `dueAt`, `writeOffAt`, `promotesAfter`, `phase` (`current`, `late`, `defaultable`, `writtenOff`); `nextStep` (`claimAgentId`, `open`, `draw`, `repay`, `cure`, `wait`, `none`). Times are Unix seconds; show them in the user's own timezone.
 
 ## 5. Actions
 Each action works the same way:
@@ -55,7 +55,7 @@ Each action works the same way:
 | Action | When | Params | What to tell the user |
 |---|---|---|---|
 | `open` | `nextStep` is `open` | — | Opens the line. Gas only, moves no money. |
-| `draw` | `nextStep` is `draw` | `amount` in USDT, e.g. `amount=1` (default: the full limit) | "Borrow {amount} USDT. Repay {total} USDT by {date}. Late adds {lateFee} USDT. After {writeOffDate} the loan is written off and marked on your name." Also: loans repaid within 24 hours do not count towards the next rung. |
+| `draw` | `nextStep` is `draw` | `amount` in USDT, e.g. `amount=1` (default: `drawNow`, what the pool can lend right now) | "Borrow {amount} USDT. Repay {total} USDT by {date}. Late adds {lateFee} USDT. After {writeOffDate} the loan is written off and marked on your name." Also: loans repaid within 24 hours do not count towards the next rung. |
 | `approve` | before `repay` (or before `vouch`, with `purpose=vouch&amount=N&borrower=0x…`) | `borrower=0x…` to pay for someone else | "This approval is for exactly {due} USDT, for this one repayment." |
 | `repay` | `nextStep` is `repay` or `cure`, after `approve` | `borrower=0x…` to pay for someone else | The amount and the outcome in the summary (promoted, on time, early, small, late, or cure). |
 | `vouch` | the user is at rung 2+, after `approve` with `purpose=vouch` | `borrower=0x…&amount=N` | "Stake {amount} USDT behind {address}. If their loan is written off, your stake is taken first, and whatever is left stays locked until they pay what they owe." |

@@ -150,6 +150,7 @@ describe.runIf(anvilBinary() !== null)("keeper against anvil", () => {
     expect(r.body.loan.dueAt).toBe(Number(live.due.dueAt));
     expect(r.body.loan.phase).toBe("current");
     expect(r.body.nextStep).toBe("repay");
+    expect(r.body.drawNow).toBe("0"); // a loan is open: nothing more to draw
     expect(r.body.handle).toBe("dewi");
     expect(r.body.history.length).toBe(4);
     expect(r.body.history[0].text).toMatch(/borrowed 2 USDT at rung 1/);

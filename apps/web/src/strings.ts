@@ -80,6 +80,9 @@ export const S = {
     openBody: "Paste this into your AI agent. It opens your line for gas only.",
     draw: "Borrow",
     amount: "Amount (USDT)",
+    partFits: (now: string, limit: string) =>
+      `The pool can lend you ${now} of your ${limit} USDT limit right now. The rest frees up as other loans are repaid.`,
+    poolCap: (now: string) => `The pool can lend you ${now} USDT right now.`,
     fee: "Fee",
     total: "Repay",
     due: "Due",

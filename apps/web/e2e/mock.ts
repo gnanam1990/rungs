@@ -20,6 +20,7 @@ export const ADDR = {
   top: "0x00000000000000000000000000000000000000a8",
   evil: "0x00000000000000000000000000000000000000a9",
   down: "0x00000000000000000000000000000000000000aa",
+  short: "0x00000000000000000000000000000000000000ab",
 } as const;
 
 const standing = (p: Partial<Record<string, unknown>> = {}) => ({
@@ -65,6 +66,8 @@ const line = (address: string, p: Record<string, unknown>) => ({
   vouchesOut: [],
   claimable: "0",
   asOfBlock: 1234,
+  // what the pool can lend right now: the full limit unless a test says otherwise; nothing while a loan is open
+  drawNow: p.drawNow ?? ((p.nextStep ?? "draw") === "draw" ? (p.limit ?? w(U)) : "0"),
   ...p,
 });
 
@@ -133,6 +136,12 @@ export const LINES: Record<string, unknown> = {
     rungLimit: w(50n * U),
     vouched: w(10n * U),
     vouchesIn: [{ voucher: ADDR.open, amount: w(10n * U) }],
+  }),
+  [ADDR.short]: line(ADDR.short, {
+    standing: standing({ level: 3, repaid: 3 }),
+    limit: w(10n * U),
+    rungLimit: w(10n * U),
+    drawNow: w(4n * U),
   }),
   [ADDR.evil]: line(ADDR.evil, {
     handle: "<img src=x onerror=window.__pwned=1><script>window.__pwned=2</script>",

@@ -109,8 +109,11 @@ function OpenCard({ line }: { line: LineResponse }) {
 
 function DrawCard({ line }: { line: LineResponse }) {
   const limit = BigInt(line.limit);
+  // the server works out what the pool can lend right now; the form never offers more than that
+  const cap = BigInt(line.drawNow) < limit ? BigInt(line.drawNow) : limit;
+  const partFits = cap < limit;
   const whole = (x: bigint) => usdt(x);
-  const [amount, setAmount] = useState(() => whole(limit < MIN_DRAW ? MIN_DRAW : limit));
+  const [amount, setAmount] = useState(() => whole(cap < MIN_DRAW ? MIN_DRAW : cap));
   const id = useId();
   let wei: bigint | null = null;
   let error: string | null = null;
@@ -118,6 +121,7 @@ function DrawCard({ line }: { line: LineResponse }) {
     wei = parseUsdt(amount);
     if (wei < MIN_DRAW) error = "The smallest loan is 1 USDT.";
     else if (wei > limit) error = `Your limit is ${usdt(limit)} USDT.`;
+    else if (wei > cap) error = S.next.poolCap(usdt(cap));
   } catch {
     error = "Enter an amount like 1 or 2.5.";
   }
@@ -131,7 +135,7 @@ function DrawCard({ line }: { line: LineResponse }) {
     const cur = ok ? wei! : MIN_DRAW;
     let next = cur + d * 10n ** 18n;
     if (next < MIN_DRAW) next = MIN_DRAW;
-    if (next > limit) next = limit;
+    if (next > cap) next = cap;
     setAmount(whole(next));
   };
   const earlyLast = line.history.find((h) => h.name === "Repaid")?.text.includes("held under 24 hours");
@@ -141,6 +145,7 @@ function DrawCard({ line }: { line: LineResponse }) {
         {S.next.draw}
       </h2>
       {earlyLast && <Notice kind="info">{S.next.earlyNote}</Notice>}
+      {partFits && <Notice kind="info">{S.next.partFits(usdt(cap), usdt(limit))}</Notice>}
       <div className="stepper">
         <label htmlFor={id} className="small">
           {S.next.amount}

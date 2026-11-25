@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type Snapshot, calldata, formatUsdt, parseUsdt, planAction } from "../src/index";
+import { type Snapshot, calldata, drawableNow, formatUsdt, parseUsdt, planAction } from "../src/index";
 import type { HolderSnapshot, PoolState } from "../src/index";
 import { MAX_UINT256_FOR_TESTS_ONLY } from "./helpers";
 
@@ -163,6 +163,35 @@ describe("draw (T-S06 / T-W03 wording)", () => {
     const me = holder(ME, { vouchedFor: 7n * U });
     expect(planAction("draw", snap(me), { amount: 8n * U }).ok).toBe(true);
     expect(planAction("draw", snap(me), { amount: 8n * U + 1n })).toMatchObject({ code: "AboveLimit" });
+  });
+});
+
+describe("drawableNow: what the pool can lend this holder right now (web-app-shipping 6)", () => {
+  const lvl3 = holder(ME, { line: { ...holder(ME).line, level: 3, everDrawn: true } });
+  it("is the full limit when the pool has room", () => {
+    expect(drawableNow(snap(lvl3))).toBe(10n * U);
+  });
+  it("is cut to the pool's idle money and to the room under the lending cap", () => {
+    expect(drawableNow(snap(lvl3, { idle: 4n * U }))).toBe(4n * U);
+    expect(drawableNow(snap(lvl3, { outstanding: 47n * U }))).toBe(3n * U);
+    expect(drawableNow(snap(lvl3, { idle: 4n * U, outstanding: 47n * U }))).toBe(3n * U);
+  });
+  it("is 0 when less than the smallest loan fits, or when nothing can be drawn", () => {
+    expect(drawableNow(snap(lvl3, { idle: U - 1n }))).toBe(0n);
+    expect(drawableNow(snap(lvl3, { outstanding: 50n * U }))).toBe(0n);
+    expect(drawableNow(snap(lvl3, { paused: true }))).toBe(0n);
+    expect(drawableNow(snap(withLoan(lvl3, U)))).toBe(0n);
+    expect(drawableNow(snap(holder(ME, { line: { ...lvl3.line, frozen: true } })))).toBe(0n);
+    expect(drawableNow(snap(holder(ME, { line: { ...lvl3.line, exists: false } })))).toBe(0n);
+    expect(drawableNow(snap(holder(ME, { ...lvl3, holdsAgentId: false })))).toBe(0n);
+  });
+  it("is 0 for a first-ever draw once today's first-borrower cap is reached", () => {
+    expect(drawableNow(snap(holder(ME), { newLinesToday: 20 }))).toBe(0n);
+    expect(drawableNow(snap(lvl3, { newLinesToday: 20 }))).toBe(10n * U);
+  });
+  it("is the planner's default draw amount, so a draw with no amount fits the pool", () => {
+    const r = planAction("draw", snap(lvl3, { idle: 4n * U }), {});
+    expect(r.ok && r.data).toBe(calldata.draw(POOL, 4n * U).data);
   });
 });
 
