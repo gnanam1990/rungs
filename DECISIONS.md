@@ -37,3 +37,9 @@ What we chose where the build pack did not settle it, and why. Newest last.
 | D31 | 2026-11-25 | M06 | `/actions/*` answers `200` with `ok: false` for refusals; `400` only for a malformed address | A refusal is a valid answer the agent must relay; the schema models it as a body |
 | D32 | 2026-11-25 | M06 | Without `RUNGS_POOL_ADDRESS`, `/v1/public/site` returns `comingSoon` and money routes return 503 | Lets the site go up before M04 without guessing |
 | D33 | 2026-11-25 | M06 | `apps/keeper/scripts/dev-local.ts`: anvil + real pool + seeded scenario + keeper | A real backend for web development and e2e without mainnet |
+| D34 | 2026-11-25 | M07 | The injected-wallet path on `/vouch` is **cut** (cut list item 3); the page gives the agent prompt and says the contract supports direct calls | It would send real transactions from code that cannot be verified end to end without a wallet; the agent path covers the flow |
+| D35 | 2026-11-25 | M07 | No router or UI library: a 40-line history router and one `styles.css` | Six routes; fewer dependencies under a strict CSP |
+| D36 | 2026-11-25 | M07 | The draw card computes fee and total with `@rungs/core` for the live stepper; the command shown is always the API's `bawPreviewCommand` | Same deterministic math as the contract; commands stay exactly what the API returned (T-W04) |
+| D37 | 2026-11-25 | M07 | Screenshots live on branch `assets/m07-screenshots`, not on `main` | 32 images (~9 MB) would bloat the repo |
+| D38 | 2026-11-25 | M07 | Lighthouse targets not measured | Cut list item 5; phone layout tests are kept |
+| D39 | 2026-11-25 | M07 | CI gets an `e2e` job (Playwright, both projects) | The web DoD is defined by those tests |
