@@ -176,3 +176,13 @@ Not done: [HUMAN] the mainnet vouch cycle between two real holders (needs M04 de
 | banned-phrase check over `README.md`, `SECURITY.md`, `OWNER-PERMISSIONS.md`, `docs/INTEGRATE.md` | 0 | none found |
 
 Not done: [HUMAN] review live numbers and decide caps; queue, fund and execute the cap raise (needs M04).
+
+## M04 prep (offline)
+
+| Command | Exit | Result |
+|---|---|---|
+| `forge test --match-contract ReadBackTest` | 0 | 2 passed: read-back passes on a correct pool and reverts `maxOutstanding` on a mismatch |
+| `scripts/simulate-nonholder.sh` against a local pool (anvil, `dev-local.ts`) | 0 | `T-E03 OK: openLine from a non-holder reverts NotAgentId (0xdfc3592e)` |
+| `cast sig "pull()"` | 0 | `0x329eb839` (used in the runbook for spike S2) |
+
+The mainnet steps themselves are in `docs/M04-RUNBOOK.md` and are the owner's.
