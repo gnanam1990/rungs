@@ -121,3 +121,16 @@ Gas (`forge test --match-contract PoolTest --gas-report`, median): `openLine` 80
 | `pnpm --filter @rungs/skill build && node dist/rungs.mjs --help` | 0 | CLI bundle builds and runs; without a pool it says "Rungs is not deployed yet" |
 
 Not done: [HUMAN] the owner's agent completing a draw using only `SKILL.md` and the prompt (needs M04 deployed).
+
+## M06 — keeper
+
+| Command | Exit | Result |
+|---|---|---|
+| `pnpm --filter @rungs/keeper test` | 0 | 21 passed |
+| fake-chain tests | 0 | T-S02 replay hash identical; T-S03 a vouch replaced by a reorg inside the re-scan window is corrected; T-S04 public-RPC range limit (700 blocks) and two rate-limit errors: chunk halves 5000 → ≤700, backoff, same derived hash as a clean run, no duplicates; a run that keeps failing writes nothing |
+| anvil scenario | 0 | 4 holders (one with handle `<script>alert(1)</script>\u0007`), 6 draws, 3 promotions, a vouch, a write-off with slashing, a cure, a claim. T-S01 derived `lines`/`loans`/`stakes` equal `lineOf`/`loanOf`/`stakeOf`; T-S02 replay and a fresh database give the same hash; T-S05 money fields equal `standingOf`/`limitOf`/`dueOf`; T-S06 draw refused for LoanOpen, AboveLimit, NotAgentId, Paused, CapReached, Frozen; T-S07 approve = live due; T-S08 names → 400; T-S10 stats equal SQL counts, team view drops the team wallet; T-S11 CORS only for `WEB_ORIGIN`, no `Set-Cookie` on 9 routes; T-S12 hostile handle returned as a JSON string with the control character replaced |
+| `KEEPER_PORT=8799 tsx scripts/dev-local.ts` + `curl` | 0 | `/v1/lines/<dewi>` → rung 1, loan 2 USDT, `nextStep: repay`; `/actions/approve` → exactly 2.02 USDT; `/v1/stats` → 4 holders, 13 transactions |
+
+Bug found and fixed: viem caches `getBlockNumber`, so after a chain rewind `readPool` asked for a block that no longer existed. `readPool` now fetches `latest` directly.
+
+Not done: [HUMAN] keeper hosting and the mainnet replay hash (needs M04 deployed and a host account).

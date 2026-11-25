@@ -28,5 +28,15 @@ See [`OWNER-PERMISSIONS.md`](OWNER-PERMISSIONS.md): fund, defund idle only, swee
 - `apps/web` — web app
 - `docs/build-pack/` — the build pack (source of truth)
 
+## Keeper runbook
+The keeper (`apps/keeper`) is a read cache and calldata helper. If it is wrong or down, the contract and the `rungs` CLI still work.
+
+- **Start:** copy `.env.example` to `.env`, set `RUNGS_POOL_ADDRESS` and `RUNGS_POOL_DEPLOY_BLOCK`, then `pnpm --filter @rungs/keeper start`. It serves on `KEEPER_PORT` and indexes every `KEEPER_CYCLE_SECONDS`.
+- **Restart:** safe at any time. It resumes from the cursor and re-reads the last `REORG_RESCAN_BLOCKS` blocks.
+- **Replay:** `pnpm --filter @rungs/keeper replay` drops the events and indexes again from the deploy block. `pnpm --filter @rungs/keeper derived-hash` prints a hash of the derived tables; two replays must print the same hash.
+- **Change RPC:** set `BSC_RPC_URL` and restart. If the new RPC refuses big log ranges, lower `LOG_CHUNK`; the indexer also halves the chunk on errors by itself.
+- **Team wallets:** list them in `TEAM_WALLETS`; `/v1/stats` reports every number with and without them.
+- **Data:** SQLite at `KEEPER_DB_PATH` (one small file). It stores chain events only: no IP addresses, no personal data.
+
 ## Licence
 MIT
