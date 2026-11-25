@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideSite } from "../src/site";
+import { decideSite, refuseWhileComingSoon } from "../src/site";
 
 const base = {
   country: "ID",
@@ -31,5 +31,21 @@ describe("T-S09 page mode", () => {
   });
   it("coming soon wins over paused", () => {
     expect(decideSite({ ...base, paused: true, comingSoon: true }).mode).toBe("comingSoon");
+  });
+});
+
+describe("coming soon also stops the API (web-app-shipping 2)", () => {
+  it("refuses new lines, loans and stakes", () => {
+    for (const a of ["open", "draw", "vouch"]) {
+      expect(refuseWhileComingSoon(true, a)).toMatchObject({ ok: false, code: "NotOpenYet" });
+    }
+  });
+  it("keeps every way out working: repay, cure, unvouch, claim, approve, write-off", () => {
+    for (const a of ["approve", "repay", "unvouch", "claim", "writeOff"]) {
+      expect(refuseWhileComingSoon(true, a)).toBeNull();
+    }
+  });
+  it("refuses nothing when live", () => {
+    expect(refuseWhileComingSoon(false, "draw")).toBeNull();
   });
 });

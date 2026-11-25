@@ -186,3 +186,14 @@ Not done: [HUMAN] review live numbers and decide caps; queue, fund and execute t
 | `cast sig "pull()"` | 0 | `0x329eb839` (used in the runbook for spike S2) |
 
 The mainnet steps themselves are in `docs/M04-RUNBOOK.md` and are the owner's.
+
+## M07 follow-up: draw amount fits the pool; coming soon stops the API (web-app-shipping §6, §2)
+
+| Command | Exit | Result |
+|---|---|---|
+| `vitest run test/actions.test.ts` (chain) and `vitest run test/site.test.ts` (keeper), before the code | 1 | 5 chain tests and the keeper site file fail: `drawableNow` and `refuseWhileComingSoon` do not exist yet |
+| same, after | 0 | chain 27 passed; keeper site 8 passed |
+| `playwright test -g T-W13` against the old `NextStepCard.tsx` from `main` | 1 | 2 failed (desktop, phone): the amount field shows `10`, expected `4` |
+| `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 45 (+1 fork skipped), skill 24, web 5, keeper 24 (includes the anvil check `drawNow: "0"` while a loan is open) |
+| `forge test` | 0 | 90 passed, 2 skipped (fork); no contract change |
+| `pnpm --filter @rungs/web e2e` | 0 | 134 passed, 34 skipped (`screens.spec.ts` runs only with `SCREENSHOTS=1`) |

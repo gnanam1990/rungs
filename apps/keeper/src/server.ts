@@ -22,7 +22,7 @@ import type { PublicClient } from "viem";
 import type { DB } from "./db";
 import type { KeeperConfig } from "./env";
 import { lineResponse, reviveArgs } from "./lines";
-import { decideSite } from "./site";
+import { decideSite, refuseWhileComingSoon } from "./site";
 import { counts } from "./stats";
 
 export interface AppDeps {
@@ -218,6 +218,8 @@ export function createApp(deps: AppDeps) {
         code: "BadInput",
         reason: `Unknown action. Use one of: ${ACTIONS.join(", ")}.`,
       });
+    const notYet = refuseWhileComingSoon(config.comingSoon, action);
+    if (notYet) return c.json(notYet);
     const borrower = c.req.query("borrower");
     if (borrower !== undefined && !isAddress(borrower)) return badAddress(c);
     const params: ActionParams = { chainId: config.chainId };

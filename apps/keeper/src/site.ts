@@ -38,3 +38,15 @@ export function decideSite(i: SiteInput): SiteResponse {
     };
   return { blocked, reason, mode: "live", notice: null };
 }
+
+/** Before launch the page hides "open a line", so the API refuses new lines, loans and stakes too. Every way out
+ *  (approve, repay, cure, unvouch, claim, write-off) keeps working. */
+const NEW_MONEY = new Set(["open", "draw", "vouch"]);
+export function refuseWhileComingSoon(comingSoon: boolean, action: string) {
+  if (!comingSoon || !NEW_MONEY.has(action)) return null;
+  return {
+    ok: false as const,
+    code: "NotOpenYet" as const,
+    reason: "Rungs is not open yet. New lines, loans and stakes start at launch.",
+  };
+}

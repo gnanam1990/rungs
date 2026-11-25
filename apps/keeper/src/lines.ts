@@ -1,6 +1,6 @@
 // GET /v1/lines/:address. Money fields come from a live snapshot read from the contract; history from the database.
 
-import { type Snapshot, currentLimit, explainEvent } from "@rungs/chain";
+import { type Snapshot, currentLimit, drawableNow, explainEvent } from "@rungs/chain";
 import { GRACE, MIN_HOLD, Phase, due, lateFee, need, phase, rungLimit } from "@rungs/core";
 import type { DB } from "./db";
 
@@ -39,13 +39,7 @@ export function nextStep(s: Snapshot): NextStep {
   if (h.loan.principal > 0n) return h.loan.writtenOff ? "cure" : "repay";
   if (h.line.frozen) return "none";
   if (!h.holdsAgentId) return "claimAgentId";
-  const p = s.pool;
-  const lim = currentLimit(h);
-  const first = !h.line.everDrawn;
-  if (p.paused || p.idle < 10n ** 18n || p.outstanding + 10n ** 18n > p.maxOutstanding || lim === 0n)
-    return "wait";
-  if (first && p.newLinesToday >= p.dailyNewLineCap) return "wait";
-  return "draw";
+  return drawableNow(s) > 0n ? "draw" : "wait";
 }
 
 export function lineResponse(db: DB, s: Snapshot, borrowersOf: { borrower: string; amount: bigint }[]) {
@@ -97,6 +91,7 @@ export function lineResponse(db: DB, s: Snapshot, borrowersOf: { borrower: strin
       : null,
     limit: currentLimit(h).toString(),
     rungLimit: (h.line.exists ? rungLimit(h.line.level) : 0n).toString(),
+    drawNow: drawableNow(s).toString(),
     vouched: h.vouchedFor.toString(),
     loan,
     nextStep: nextStep(s),

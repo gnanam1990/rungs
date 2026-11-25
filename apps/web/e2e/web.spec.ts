@@ -32,6 +32,7 @@ test.describe("T-W02 /line renders each state", () => {
     cured: /1 of 2 on-time repayments/,
     top: /Top rung reached/,
     down: /Showing nothing rather than guessing/,
+    short: /The pool can lend you 4 of your 10 USDT limit right now/,
   };
   for (const [state, path] of LINE_STATES) {
     test(state, async ({ page }) => {
@@ -70,11 +71,28 @@ test("T-W03 the draw card shows amount, fee, total, due date and the late rule b
     return before(t, pre) && before(l, pre);
   });
   expect(order).toBe(true);
+  // the whole limit fits the pool, so there is no "only part fits" note
+  await expect(card).not.toContainText("The pool can lend you");
   // the stepper stays inside the limit
   await card.getByRole("button", { name: "Borrow 1 USDT more" }).click();
   await expect(terms).toContainText("2.02 USDT");
   await card.getByRole("button", { name: "Borrow 1 USDT less" }).click();
   await expect(terms).toContainText("1.01 USDT");
+});
+
+test("T-W13 the draw card offers only what the pool can lend now, and says so", async ({ page }) => {
+  const api = await mockApi(page);
+  await page.goto(`/line/${ADDR.short}`);
+  const card = page.locator("section", { has: page.getByRole("heading", { name: "Borrow" }) });
+  const amount = card.getByLabel("Amount (USDT)");
+  await expect(amount).toHaveValue("4");
+  await expect(card).toContainText("The pool can lend you 4 of your 10 USDT limit right now");
+  await expect.poll(() => api.calls.some((c) => c.path.endsWith("/actions/draw?amount=4"))).toBe(true);
+  await card.getByRole("button", { name: "Borrow 1 USDT more" }).click();
+  await expect(amount).toHaveValue("4");
+  await amount.fill("10");
+  await expect(card.getByRole("alert")).toHaveText("The pool can lend you 4 USDT right now.");
+  expect(api.calls.some((c) => c.path.endsWith("/actions/draw?amount=10"))).toBe(false);
 });
 
 test("T-W04 copy buttons copy exactly the command the API returned", async ({ page }) => {
