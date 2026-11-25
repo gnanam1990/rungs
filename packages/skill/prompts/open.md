@@ -1,0 +1,1 @@
+Use my Binance Agentic Wallet on BNB Chain. First read {{KEEPER_URL}}/skill.md and follow its rules. Check that Developer Mode is on and get my wallet address. Then open my Rungs line: get the call from {{KEEPER_URL}}/v1/lines/<my address>/actions/open and preview it. Show me the preview and wait for my yes before each step.
