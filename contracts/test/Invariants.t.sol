@@ -230,8 +230,8 @@ contract Handler is Test {
         if (v == address(0)) return;
         address b = _a(j);
         if (b == v) b = _a(j + 1);
-        (bool hasB,,,,,) = _line(b);
-        if (!hasB) return;
+        (bool hasB,,,, bool frozenB,) = _line(b);
+        if (!hasB || frozenB) return;
         uint256 room = LadderLib.MAX_VOUCHED - pool.vouchedFor(b);
         if (room < U) return;
         if (pool.stakeOf(v, b) == 0) {

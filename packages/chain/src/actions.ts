@@ -304,6 +304,11 @@ function checkVouch(s: Snapshot, amount: bigint | undefined): { ok: true; amount
   if (me.line.level < MIN_VOUCH_LEVEL)
     return no("VouchRule", `Vouching needs rung ${MIN_VOUCH_LEVEL} or higher.`);
   if (!b.line.exists) return no("NoLine", "That address has no line yet.");
+  if (b.line.frozen)
+    return no(
+      "VouchRule",
+      "That line is frozen after a write-off. A stake there could not help and would stay locked until they pay what they owe.",
+    );
   if (amount < MIN_STAKE) return no("BelowMin", `The smallest stake is ${usdt(MIN_STAKE)}.`);
   if (b.vouchedFor + amount > MAX_VOUCHED)
     return no("VouchRule", `At most ${usdt(MAX_VOUCHED)} can be staked behind one person in total.`);

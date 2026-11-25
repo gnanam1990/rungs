@@ -43,3 +43,6 @@ What we chose where the build pack did not settle it, and why. Newest last.
 | D37 | 2026-11-25 | M07 | Screenshots live on branch `assets/m07-screenshots`, not on `main` | 32 images (~9 MB) would bloat the repo |
 | D38 | 2026-11-25 | M07 | Lighthouse targets not measured | Cut list item 5; phone layout tests are kept |
 | D39 | 2026-11-25 | M07 | CI gets an `e2e` job (Playwright, both projects) | The web DoD is defined by those tests |
+| D40 | 2026-11-25 | M09 | `vouch` reverts `Frozen` when the borrower's line is frozen (finding F-01) | A stake there could not help and would sit locked; the contract is not deployed yet, so the fix costs nothing |
+| D41 | 2026-11-25 | M09 | Kept the TDD rule that a written-off loan locks the remaining stake until a cure (F-02); disclosed it instead | Changing it would override the pack's design; it keeps vouchers accountable and a cure makes everyone whole |
+| D42 | 2026-11-25 | M09 | README honesty sections filled now rather than in M10 | The cut list says they are never cut; they describe the current, pre-mainnet state honestly |
