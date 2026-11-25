@@ -13,6 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: forge build (ABI check and anvil integration tests read the artifacts)
+        run: forge build
+        working-directory: contracts
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

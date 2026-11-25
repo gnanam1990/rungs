@@ -3,9 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./render": "./src/render.ts",
+    "./lint": "./src/lint.ts"
+  },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "esbuild src/cli.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/rungs.mjs"
+  },
+  "dependencies": {
+    "@rungs/chain": "workspace:*",
+    "@rungs/core": "workspace:*",
+    "viem": "2.21.55"
+  },
+  "bin": {
+    "rungs": "./dist/rungs.mjs"
+  },
+  "files": ["dist", "SKILL.md", "llms.txt.tmpl", "prompts"],
+  "devDependencies": {
+    "esbuild": "0.24.2"
   }
 }

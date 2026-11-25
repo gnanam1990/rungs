@@ -108,3 +108,16 @@ Decision: keeper uses publicnode, `LOG_CHUNK=5000`, halves the chunk on any erro
 | `slither .` (0.11.6, src only, no informational) | 0 | 14 results, all `incorrect-equality` on existence checks or `timestamp` on day-long windows; explained in `SECURITY.md` |
 
 Gas (`forge test --match-contract PoolTest --gas-report`, median): `openLine` 80,649 · `draw` 130,255 · `repay` 72,676 · `repayFor` 86,820 · `writeOff` 93,562.
+
+## M05 — chain package, skill and CLI
+
+| Command | Exit | Result |
+|---|---|---|
+| `npx vitest run` in `packages/chain` before `actions.ts`/`events.ts` | 1 | 4 files fail to import |
+| `npx vitest run` in `packages/skill` before the CLI | 1 | 20 failed |
+| `pnpm --filter @rungs/chain test` | 0 | 37 passed, 1 skipped placeholder: T-H01 golden calldata from `cast calldata`, generated ABI equals the Foundry artifact, planner refusals and summaries, T-K04 event sentences |
+| T-H02 (anvil) | 0 | local anvil + real `RungsPool` from `contracts/out`: open → draw 1 → wait 24 h → approve exactly 1.01 → repay → rung 1, every call built by `planAction`; stranger refused before any transaction. No private key used (anvil unlocked accounts) |
+| `pnpm --filter @rungs/skill test` | 0 | 23 passed: T-K01 … T-K08 (SKILL.md lint, llms.txt 8 KB, red-line sentence check, static no-signing scan) |
+| `pnpm --filter @rungs/skill build && node dist/rungs.mjs --help` | 0 | CLI bundle builds and runs; without a pool it says "Rungs is not deployed yet" |
+
+Not done: [HUMAN] the owner's agent completing a draw using only `SKILL.md` and the prompt (needs M04 deployed).

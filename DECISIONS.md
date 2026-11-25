@@ -24,3 +24,10 @@ What we chose where the build pack did not settle it, and why. Newest last.
 | D18 | 2026-11-25 | M03 | `limitOf` returns 0 for no line or a frozen line | It answers "what can this holder draw now" for integrators |
 | D19 | 2026-11-25 | M03 | Deploy script does not set caps; the owner calls `setCaps` and `fund` after deploy | The deployer key holds nothing and is not the owner (CLAUDE.md) |
 | D20 | 2026-11-25 | M03 | Slither runs from a Python 3.12 venv in the scratchpad, not installed system-wide | Python 3.15 cannot build a slither dependency (`ckzg`) |
+| D21 | 2026-11-25 | M05 | One planner, `planAction(action, snapshot)`, in `packages/chain`; the keeper route and the CLI both call it | The API and CLI must refuse and word things identically; all amounts come from `@rungs/core` |
+| D22 | 2026-11-25 | M05 | `approve` takes `purpose=vouch&amount=N` for stakes; without it, it is always the exact live `due` (of `borrower` if given) | A stake also needs an exact approval; the action list in the TDD has one `approve` |
+| D23 | 2026-11-25 | M05 | `repay` and `vouch` refuse (`BadInput`) when the allowance is short, naming the exact approval to make | The TDD says refuse when the call would revert; the schema has no dedicated code |
+| D24 | 2026-11-25 | M05 | T-H02 runs on a local anvil with the real pool and mock token/registry instead of a mainnet fork | Deterministic, no RPC limits, no key; the mainnet fork is already covered by `Fork.t.sol` |
+| D25 | 2026-11-25 | M05 | Server and CLI dates are shown in UTC; the web app shows the visitor's timezone | A server cannot know the reader's timezone |
+| D26 | 2026-11-25 | M05 | The banned-word list includes "free"; the skill says "costless" instead | UI spec section 6 bans "free" outright |
+| D27 | 2026-11-25 | M05 | CI `ts` job installs Foundry and runs `forge build` first | The ABI-drift test and the anvil test read `contracts/out` |
