@@ -3,9 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start": "tsx src/main.ts",
+    "replay": "tsx src/main.ts --replay",
+    "derived-hash": "tsx src/hash-cli.ts",
+    "dev:local": "tsx scripts/dev-local.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "1.13.7",
+    "@rungs/chain": "workspace:*",
+    "@rungs/core": "workspace:*",
+    "@rungs/skill": "workspace:*",
+    "better-sqlite3": "11.7.0",
+    "hono": "4.6.14",
+    "viem": "2.21.55"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.12",
+    "tsx": "4.19.2"
   }
 }

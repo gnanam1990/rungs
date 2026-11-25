@@ -31,3 +31,9 @@ What we chose where the build pack did not settle it, and why. Newest last.
 | D25 | 2026-11-25 | M05 | Server and CLI dates are shown in UTC; the web app shows the visitor's timezone | A server cannot know the reader's timezone |
 | D26 | 2026-11-25 | M05 | The banned-word list includes "free"; the skill says "costless" instead | UI spec section 6 bans "free" outright |
 | D27 | 2026-11-25 | M05 | CI `ts` job installs Foundry and runs `forge build` first | The ABI-drift test and the anvil test read `contracts/out` |
+| D28 | 2026-11-25 | M06 | Derived tables are rebuilt from all events after each cycle by replaying them through `@rungs/core` | Simplest way to make replays byte-identical; volume is tiny |
+| D29 | 2026-11-25 | M06 | `holders` in stats = distinct line openers, plus vouchers, plus payers or claimers who also have a line | Events do not carry `tx.from` for write-offs; this counts only addresses proven to hold an Agent ID |
+| D30 | 2026-11-25 | M06 | `nextStep: wait` means the pool cannot lend to this holder right now (paused, short, at a cap) | The UI spec's "wait" card text is shown by the web app from the last outcome instead |
+| D31 | 2026-11-25 | M06 | `/actions/*` answers `200` with `ok: false` for refusals; `400` only for a malformed address | A refusal is a valid answer the agent must relay; the schema models it as a body |
+| D32 | 2026-11-25 | M06 | Without `RUNGS_POOL_ADDRESS`, `/v1/public/site` returns `comingSoon` and money routes return 503 | Lets the site go up before M04 without guessing |
+| D33 | 2026-11-25 | M06 | `apps/keeper/scripts/dev-local.ts`: anvil + real pool + seeded scenario + keeper | A real backend for web development and e2e without mainnet |

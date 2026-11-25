@@ -85,8 +85,12 @@ export async function readPool(
   pool: Address,
   blockNumber?: bigint,
 ): Promise<PoolState> {
-  const bn = blockNumber ?? (await client.getBlockNumber());
-  const block = await client.getBlock({ blockNumber: bn });
+  // One call for number and time, uncached: viem caches getBlockNumber, which goes stale across a reorg.
+  const block =
+    blockNumber === undefined
+      ? await client.getBlock({ blockTag: "latest" })
+      : await client.getBlock({ blockNumber });
+  const bn = block.number;
   const r = <T>(functionName: string, args: readonly unknown[] = []) =>
     client.readContract({
       address: pool,
