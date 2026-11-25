@@ -2,7 +2,7 @@
 
 A credit ladder on the Agent ID. A holder of an Agent ID borrows a small amount of USDT with no collateral, and each on-time repayment raises their limit and builds a public record on their name.
 
-> Status: under construction for the Agent ID Hackathon. Nothing is live on mainnet yet.
+> Status: under construction for the Agent ID Hackathon (submission closes 2026-12-09 08:00 UTC). Nothing is live on mainnet yet. Every change lands through a pull request with green checks.
 
 ## What is live
 
