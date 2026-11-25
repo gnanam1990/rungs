@@ -9,6 +9,7 @@ A credit ladder on the Agent ID. A holder of an Agent ID borrows a small amount 
 ## What is not live
 
 ## Owner permissions
+See [`OWNER-PERMISSIONS.md`](OWNER-PERMISSIONS.md): fund, defund idle only, sweep the reserve only with nothing lent, set caps (raises wait 2 days), pause new risk only. The owner cannot touch stakes, claimables, open loans or holders' wallets, and cannot change the ladder.
 
 ## Trust assumptions
 

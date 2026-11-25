@@ -15,3 +15,12 @@ What we chose where the build pack did not settle it, and why. Newest last.
 | D9 | 2026-11-25 | M02 | Line counters (`level`, `streak`, `repaid`, `late`, `defaults`) are `number`; amounts and times are `bigint` | They mirror uint8/uint16 storage and are not money; T-C11 checks every money and time type is bigint |
 | D10 | 2026-11-25 | M02 | `cureSplit(principal, slashedPerVoucher, fromReserve)` returns `{toVouchers, toReserve, toIdle}`; idle gets the rest (the socialised part) | TDD section 4 cure waterfall; the pack gives no vectors for it, so round-trip tests against `slashSplit` cover it |
 | D11 | 2026-11-25 | M02 | Coverage uses istanbul, not v8 | v8 reported a phantom uncovered "line 1" (the file's opening comment) from source maps |
+| D12 | 2026-11-25 | M03 | Added `lossOf[borrower]` (`fromReserve`, `socialised`) and `_slashedBy[borrower]` | The cure waterfall must know how a write-off was covered; the TDD storage list did not hold it |
+| D13 | 2026-11-25 | M03 | A voucher whose stake is slashed to zero leaves `vouchersOf` and frees a vouchee slot at write-off; their claim on a cure is kept in `slashedOwed` | Otherwise a never-cured default would hold the voucher's slot forever |
+| D14 | 2026-11-25 | M03 | Extra events `Restored`, `ReserveSwept`, `CapsRaiseCancelled` | Every money and owner movement is visible to the keeper and to judges |
+| D15 | 2026-11-25 | M03 | `socialisedLoss` is the **unrecovered** amount: it goes down when a cure pays it back | The stats page shows cumulative write-offs from events; the contract field shows what is still lost |
+| D16 | 2026-11-25 | M03 | Lowering caps cancels a queued raise; `executeCapsRaise` is owner-only | Avoids a stale raise firing after the owner deliberately lowered |
+| D17 | 2026-11-25 | M03 | `unvouch` amount above the stake reverts `AboveLimit`, zero reverts `BelowMin` | Reuses the pack's error list instead of adding new errors |
+| D18 | 2026-11-25 | M03 | `limitOf` returns 0 for no line or a frozen line | It answers "what can this holder draw now" for integrators |
+| D19 | 2026-11-25 | M03 | Deploy script does not set caps; the owner calls `setCaps` and `fund` after deploy | The deployer key holds nothing and is not the owner (CLAUDE.md) |
+| D20 | 2026-11-25 | M03 | Slither runs from a Python 3.12 venv in the scratchpad, not installed system-wide | Python 3.15 cannot build a slither dependency (`ckzg`) |
