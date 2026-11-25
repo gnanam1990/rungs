@@ -181,12 +181,23 @@ export const S = {
       "Paste a prompt from your line page. Your agent previews every call and waits for your yes.",
     ],
     forAgent: "For the agent",
-    links: ["llms.txt", "skill.md", "Line and action API", "Contract source and ABI"],
+    links: [
+      "llms.txt",
+      "skill.md",
+      "Line and action API",
+      "Contract source and ABI",
+      "Integrate: gate your app on standing",
+    ],
     never:
       "Rungs never asks for a seed phrase, private key, API secret, pairing code or QR code, and there is no sign-in on this site.",
   },
   blocked: "Rungs is not available in your region.",
   paused: "New lines, loans and stakes are paused. Repayments still work.",
   notFound: "This page does not exist.",
-  footer: { contract: "Contract", repo: "Source code", notDeployed: "not deployed yet" },
+  footer: {
+    contract: "Contract",
+    repo: "Source code",
+    integrate: "Integrate with Rungs",
+    notDeployed: "not deployed yet",
+  },
 } as const;

@@ -149,3 +149,15 @@ Bugs the tests found and that were fixed: `overflow-x: hidden` on `html`/`body` 
 Screenshots (every route and every `/line` state, both widths): branch `assets/m07-screenshots`, e.g. [phone line, late](https://raw.githubusercontent.com/gnanam1990/rungs/assets/m07-screenshots/m07/phone-line-late.jpg), [desktop home](https://raw.githubusercontent.com/gnanam1990/rungs/assets/m07-screenshots/m07/desktop-home.jpg).
 
 Not done: Lighthouse scores (cut list item 5); [HUMAN] hosting, domain, and the "List Your dApp" application.
+
+## M08 — partner kit and vouching
+
+| Command | Exit | Result |
+|---|---|---|
+| `forge build` before `RungsGate.sol` existed | 1 | `Source "src/RungsGate.sol" not found` |
+| `forge test --match-contract GateTest` | 0 | 4 passed: T-G01 passes at or above `minLevel`, reverts with no line, reverts when frozen even at rung 0 and passes again after a cure; T-G02 `GatedMint` mints only at rung 1+, once |
+| `pnpm --filter @rungs/chain test` (integrate-doc) | 0 | T-G02: the guide's Solidity block **is** `contracts/examples/GatedMint.sol` (compiled by forge in CI), the TS block **is** `packages/chain/examples/standing.ts` (typechecked in CI), the interface lines match `IRungsStanding.sol` |
+| `pnpm --filter @rungs/skill test` (vouch integration) | 0 | T-G03 on anvil with the real pool, every call from `rungs calldata`: climb to rung 2 (8 calls), approve exactly 3 for a stake, vouch, borrower draws 4 (1 + 3), unvouch refused while the loan is open (`StakeLocked`), repay, rung 1, unvouch 3, `totalStaked` back to 0 |
+| `pnpm --filter @rungs/web e2e` | 0 | 126 passed (adds: `INTEGRATE.md` linked from the footer and `/agents`) |
+
+Not done: [HUMAN] the mainnet vouch cycle between two real holders (needs M04 deployed); [HUMAN] one message each to three hackathon teams offering the snippet; the `/vouch` wallet path (cut, D34).

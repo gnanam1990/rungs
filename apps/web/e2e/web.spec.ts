@@ -253,3 +253,13 @@ test("T-W12 no Binance or BNB in the product name, logo alt text or title", asyn
     expect(await page.locator("meta[property='og:site_name']").getAttribute("content")).toBe("Rungs");
   }
 });
+
+test("INTEGRATE.md is linked from the footer and /agents", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/agents");
+  const links = page.locator('a[href$="/docs/INTEGRATE.md"]');
+  await expect(links).toHaveCount(2);
+  await expect(
+    page.getByRole("contentinfo").getByRole("link", { name: "Integrate with Rungs" }),
+  ).toBeVisible();
+});

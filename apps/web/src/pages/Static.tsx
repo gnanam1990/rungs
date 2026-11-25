@@ -365,6 +365,7 @@ export function AgentsPage() {
     `${KEEPER_URL}/skill.md`,
     `${KEEPER_URL}/v1/lines/0xYourAddress`,
     REPO_URL,
+    `${REPO_URL}/blob/main/docs/INTEGRATE.md`,
   ];
   return (
     <>
