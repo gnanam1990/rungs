@@ -55,7 +55,11 @@ Tell the agent the address and deploy block. It updates `packages/chain/src/addr
 ## 6. First real loan (T-E02)
 With your own Agent ID and Developer Mode on, paste the **open** prompt, then the **draw** prompt for 1 USDT. Wait **at least 24 hours**, then the **repay** prompt (approve exactly 1.01, then repay). Record every hash. The site should then show rung 1.
 
-## 7. Host the keeper and the site
-- Keeper: one Node 22 service with a small volume for SQLite (Railway, Fly or a VPS). Env from `.env.example` (`RUNGS_POOL_ADDRESS`, `RUNGS_POOL_DEPLOY_BLOCK`, `WEB_ORIGIN`, `PUBLIC_KEEPER_URL`, `TEAM_WALLETS`). Start: `pnpm --filter @rungs/keeper start`.
-- Site: `VITE_KEEPER_URL=<keeper url> pnpm --filter @rungs/web build`, then host `apps/web/dist` on any static host with SPA fallback to `index.html`. Proxy `/llms.txt` and `/skill.md` to the keeper. The domain must not contain "binance" or "bnb".
+## 7. Host the keeper and the site (one service)
+The `Dockerfile` at the repo root builds one image: the keeper also serves the site, `/llms.txt` and `/skill.md` on the same domain. CI builds and starts it on every pull request.
+- Pick a host that builds from a Dockerfile (Railway, Fly or a VPS) and create the account yourself. The domain must not contain "binance" or "bnb".
+- Build argument: `PUBLIC_URL=https://<your domain>` (no trailing slash).
+- Volume: mount one at `/data` (SQLite lives there).
+- Environment: `RUNGS_POOL_ADDRESS`, `RUNGS_POOL_DEPLOY_BLOCK`, `BSC_RPC_URL` (a keyed RPC is better), `TEAM_WALLETS`. Nothing secret: **never** put `DEPLOYER_PRIVATE_KEY` or `BSCSCAN_API_KEY` in the host's settings.
+- Check: open `https://<your domain>/`, `/open`, `/llms.txt`, `/skill.md` and `/v1/stats` on your phone.
 - Then: replay twice and record `pnpm --filter @rungs/keeper derived-hash` both times (M06 DoD); apply for "List Your dApp".

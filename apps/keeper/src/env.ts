@@ -21,6 +21,8 @@ export interface KeeperConfig {
   countryHeader: string;
   unknownCountryPolicy: "allow" | "block";
   comingSoon: boolean;
+  /** the built web app (apps/web/dist) to serve from this process; null = API only */
+  webDist: string | null;
 }
 
 const addr = (s: string | undefined) => (s && /^0x[0-9a-fA-F]{40}$/.test(s) ? (s as `0x${string}`) : null);
@@ -37,7 +39,7 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     pool: addr(env.RUNGS_POOL_ADDRESS) ?? BSC.rungsPool,
     deployBlock: BigInt(env.RUNGS_POOL_DEPLOY_BLOCK || BSC.rungsPoolDeployBlock || 0),
     dbPath: env.KEEPER_DB_PATH || "./data/rungs.sqlite",
-    port: Number(env.KEEPER_PORT || 8787),
+    port: Number(env.KEEPER_PORT || env.PORT || 8787),
     cycleSeconds: Number(env.KEEPER_CYCLE_SECONDS || 6),
     logChunk: BigInt(env.LOG_CHUNK || 5000),
     reorgRescanBlocks: BigInt(env.REORG_RESCAN_BLOCKS || 30),
@@ -52,5 +54,6 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     countryHeader: (env.COUNTRY_HEADER || "cf-ipcountry").toLowerCase(),
     unknownCountryPolicy: env.UNKNOWN_COUNTRY_POLICY === "block" ? "block" : "allow",
     comingSoon: env.COMING_SOON === "true",
+    webDist: env.WEB_DIST || null,
   };
 }

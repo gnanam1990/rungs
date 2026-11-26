@@ -6,7 +6,7 @@ A credit ladder on the Agent ID. A holder of an Agent ID borrows a small amount 
 
 ## What is live
 Nothing on mainnet yet. Everything below runs and is tested locally and in CI:
-- `RungsPool` contract with ladder, vouching, write-off and cure; 88 Foundry tests, 9 invariants (0 reverts over 200,000 calls each), and fork tests against the real Agent ID registry and USDT on BNB Chain.
+- `RungsPool` contract with ladder, vouching, write-off and cure; 90 Foundry tests, 9 invariants (0 reverts over 200,000 calls each), and fork tests against the real Agent ID registry and USDT on BNB Chain.
 - `rungs` CLI and the agent skill (`packages/skill/SKILL.md`, `llms.txt`).
 - Keeper (indexer + read API) and the web app, tested against a local chain and a mocked API on desktop and phone widths.
 
@@ -18,6 +18,15 @@ Evidence for every claim is in [`PROVEN.md`](PROVEN.md).
 - Hosting for the keeper and the site; the Agent ID directory listing; the hackathon submission.
 - The injected-wallet path on `/vouch` (cut; vouching works through the agent and the contract).
 - No audit.
+
+## What is proven
+Each line is a command that was run, with its exit code and counts, in [`PROVEN.md`](PROVEN.md). A claim that is not there is not proven.
+- **Ladder math:** `LadderLib.sol` and `packages/core` give identical results on all 92 shared vectors; `packages/core` has 100% line and branch coverage.
+- **Contract:** 90 Foundry tests; nine invariants held over 200,000 random calls each with 0 reverts; LadderLib fuzzed 10,000 times against an independent reference.
+- **Real chain, forked:** a real Agent ID holder opened a line, borrowed 1 real USDT and repaid 1.01 against the real registry and USDT on a fork of BNB Chain.
+- **Keeper:** its tables match live contract reads; two full replays give the same hash; it recovers from reorgs and public-RPC range limits.
+- **Site:** every page passes the phone-width, accessibility and red-line checks in Playwright on desktop and phone; the hosted image is built and started in CI.
+- **Not yet proven:** anything on mainnet. Deployment, verification and the first real loan add their transaction hashes here and in `PROVEN.md` when they happen.
 
 ## Owner permissions
 See [`OWNER-PERMISSIONS.md`](OWNER-PERMISSIONS.md): fund, defund idle only, sweep the reserve only with nothing lent, set caps (raises wait 2 days), pause new risk only. The owner cannot touch stakes, claimables, open loans or holders' wallets, and cannot change the ladder.
@@ -60,6 +69,7 @@ The keeper (`apps/keeper`) is a read cache and calldata helper. If it is wrong o
 - **Change RPC:** set `BSC_RPC_URL` and restart. If the new RPC refuses big log ranges, lower `LOG_CHUNK`; the indexer also halves the chunk on errors by itself.
 - **Team wallets:** list them in `TEAM_WALLETS`; `/v1/stats` reports every number with and without them.
 - **Data:** SQLite at `KEEPER_DB_PATH` (one small file). It stores chain events only: no IP addresses, no personal data.
+- **Hosting:** one service serves everything. The `Dockerfile` builds the site into the keeper image (`WEB_DIST`), so the site, `/v1/*`, `/llms.txt` and `/skill.md` share one domain with no proxy or CORS setup. Build with `--build-arg PUBLIC_URL=https://<your domain>` and mount a volume at `/data`. The keeper listens on the host's `PORT` when `KEEPER_PORT` is unset. It needs no secrets. CI builds and starts this image on every pull request.
 
 ## Licence
 MIT

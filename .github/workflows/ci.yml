@@ -67,3 +67,23 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: Playwright, desktop and phone, mocked API
         run: pnpm e2e
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: build the one-service image (keeper + site)
+        run: docker build --build-arg PUBLIC_URL=http://localhost:8787 -t rungs .
+      - name: start it with no pool configured (coming soon, no chain reads)
+        run: docker run -d --name rungs -p 8787:8787 rungs
+      - name: wait for the keeper
+        run: for i in $(seq 1 30); do curl -sf http://localhost:8787/v1/public/site && exit 0; sleep 2; done; docker logs rungs; exit 1
+      - name: the page, a page route, llms.txt and skill.md are served
+        run: |
+          curl -sf http://localhost:8787/ | grep -q '<div id="root">'
+          curl -sf http://localhost:8787/line/0x70997970C51812dc3A010C7d01b50e0d17dc79C8 | grep -q '<div id="root">'
+          curl -sf http://localhost:8787/llms.txt | grep -q Rungs
+          curl -sf http://localhost:8787/skill.md | grep -q Rungs
+          curl -s http://localhost:8787/v1/public/site | grep -q comingSoon
+      - if: always()
+        run: docker logs rungs || true
