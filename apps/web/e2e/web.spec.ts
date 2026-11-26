@@ -301,6 +301,10 @@ test.describe("T-W14 cards line up", () => {
         for (const g of document.querySelectorAll<HTMLElement>(".grid-2, .grid-3, .grid-4, .split")) {
           const kids = [...g.children] as HTMLElement[];
           const tracks = getComputedStyle(g).gridTemplateColumns.split(" ").length;
+          // on desktop each grid keeps its columns (a collapse to one column would hide every row check below)
+          const want = { "grid-2": 2, "grid-3": 3, "grid-4": 4, split: 2 } as Record<string, number>;
+          const cls = Object.keys(want).find((c) => g.classList.contains(c))!;
+          if (tracks !== want[cls]) out.push(`${cls}: ${tracks} columns, expected ${want[cls]}`);
           if (kids.length < tracks) out.push(`${g.className}: ${kids.length} cards in ${tracks} columns`);
           const rows = new Map<number, DOMRect[]>();
           for (const k of kids) {
