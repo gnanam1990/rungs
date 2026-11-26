@@ -67,7 +67,7 @@ export function Home({ site }: { site: Site | null }) {
         <h2 id="how-title">{S.home.howTitle}</h2>
         <div className="grid-3">
           {S.home.how.map((h) => (
-            <article key={h.title} className="card stack">
+            <article key={h.title} className="card stack card-fill">
               <h3>{h.title}</h3>
               <p className="muted">{h.body}</p>
               <PromptBlock

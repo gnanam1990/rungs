@@ -24,10 +24,10 @@ export function AddressField({ compact = false }: { compact?: boolean }) {
   };
   return (
     <form className="addr" onSubmit={submit} aria-label="Find a line by wallet address" noValidate>
-      <div className="addr-field">
-        <label htmlFor={id} className="label-text small">
-          {S.address.label}
-        </label>
+      <label htmlFor={id} className="label-text small">
+        {S.address.label}
+      </label>
+      <div className="addr-row">
         <input
           id={id}
           name="address"
@@ -44,16 +44,16 @@ export function AddressField({ compact = false }: { compact?: boolean }) {
           aria-invalid={error ? "true" : "false"}
           aria-describedby={error ? `${id}-err` : undefined}
         />
-        {error && (
-          <span id={`${id}-err`} className="field-error" role="alert">
-            {error}
-          </span>
-        )}
+        <button type="submit" className={`btn btn-primary${compact ? " btn-sm" : ""}`}>
+          {S.address.go}
+          <ArrowRight size={16} aria-hidden="true" />
+        </button>
       </div>
-      <button type="submit" className={`btn btn-primary${compact ? " btn-sm" : ""}`}>
-        {S.address.go}
-        <ArrowRight size={16} aria-hidden="true" />
-      </button>
+      {error && (
+        <span id={`${id}-err`} className="field-error" role="alert">
+          {error}
+        </span>
+      )}
     </form>
   );
 }
