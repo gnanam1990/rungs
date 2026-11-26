@@ -281,3 +281,61 @@ test("INTEGRATE.md is linked from the footer and /agents", async ({ page }) => {
     page.getByRole("contentinfo").getByRole("link", { name: "Integrate with Rungs" }),
   ).toBeVisible();
 });
+
+test.describe("T-W14 cards line up", () => {
+  for (const path of ROUTES) {
+    test(path, async ({ page }, info) => {
+      await mockApi(page);
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      // the address box and its Open button share a centre line (hero on /, header elsewhere)
+      const addr = page.locator("form.addr").first();
+      const input = await addr.locator("input").boundingBox();
+      const button = await addr.getByRole("button").boundingBox();
+      expect(Math.abs(input!.y + input!.height / 2 - (button!.y + button!.height / 2))).toBeLessThanOrEqual(
+        1,
+      );
+      if (info.project.name !== "desktop") return;
+      const problems = await page.evaluate(() => {
+        const out: string[] = [];
+        for (const g of document.querySelectorAll<HTMLElement>(".grid-2, .grid-3, .grid-4, .split")) {
+          const kids = [...g.children] as HTMLElement[];
+          const tracks = getComputedStyle(g).gridTemplateColumns.split(" ").length;
+          // on desktop each grid keeps its columns (a collapse to one column would hide every row check below)
+          const want = { "grid-2": 2, "grid-3": 3, "grid-4": 4, split: 2 } as Record<string, number>;
+          const cls = Object.keys(want).find((c) => g.classList.contains(c))!;
+          if (tracks !== want[cls]) out.push(`${cls}: ${tracks} columns, expected ${want[cls]}`);
+          if (kids.length < tracks) out.push(`${g.className}: ${kids.length} cards in ${tracks} columns`);
+          const rows = new Map<number, DOMRect[]>();
+          for (const k of kids) {
+            const r = k.getBoundingClientRect();
+            const key = Math.round(r.top);
+            rows.set(key, [...(rows.get(key) ?? []), r]);
+          }
+          for (const rs of rows.values()) {
+            const bottoms = rs.map((r) => Math.round(r.bottom));
+            if (Math.max(...bottoms) - Math.min(...bottoms) > 1)
+              out.push(`${g.className}: bottoms ${bottoms}`);
+          }
+        }
+        // prompt boxes in a row of cards end on the same line
+        for (const g of document.querySelectorAll<HTMLElement>(".grid-3")) {
+          const boxes = [...g.querySelectorAll<HTMLElement>(".prompt-box")].map((b) =>
+            Math.round(b.getBoundingClientRect().bottom),
+          );
+          if (boxes.length > 1 && Math.max(...boxes) - Math.min(...boxes) > 1)
+            out.push(`prompt boxes end at ${boxes}`);
+        }
+        return out;
+      });
+      expect(problems).toEqual([]);
+    });
+  }
+});
+
+test("T-W14 the vouch form's address box is wide enough for an address", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/vouch");
+  const box = await page.getByLabel("Their wallet address").boundingBox();
+  expect(box!.width).toBeGreaterThanOrEqual(Math.min(420, page.viewportSize()!.width - 80));
+});

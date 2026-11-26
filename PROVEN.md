@@ -197,3 +197,13 @@ The mainnet steps themselves are in `docs/M04-RUNBOOK.md` and are the owner's.
 | `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 45 (+1 fork skipped), skill 24, web 5, keeper 24 (includes the anvil check `drawNow: "0"` while a loan is open) |
 | `forge test` | 0 | 90 passed, 2 skipped (fork); no contract change |
 | `pnpm --filter @rungs/web e2e` | 0 | 134 passed, 34 skipped (`screens.spec.ts` runs only with `SCREENSHOTS=1`) |
+
+## M07 follow-up: cards line up
+
+| Command | Exit | Result |
+|---|---|---|
+| `playwright test -g T-W14` before the CSS change | 1 | 7 failed: the Open button sat 24 px (desktop) and 54 px (phone) off the address box's centre; `grid-3: 2 cards in 3 columns` on /ladder and /vouch; card bottoms differed in `.split` rows; the vouch address box was 160 px wide |
+| same, after | 0 | 14 passed (desktop and phone, every route) |
+| `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 45 (+1 fork skipped), skill 24, web 5, keeper 24 |
+| `forge test` | 0 | 90 passed, 2 skipped (fork); no contract change |
+| `pnpm --filter @rungs/web e2e` | 0 | 148 passed (was 134), 34 skipped (screenshots only with `SCREENSHOTS=1`) |

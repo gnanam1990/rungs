@@ -144,7 +144,7 @@ export const S = {
     ],
     cureNote: "If they later pay what they owe, vouchers are paid back first.",
     limits:
-      "Limits: rung 2 or higher, no open default, at most 3 people behind one holder, at most 3 people per voucher, at most 50 USDT staked behind one holder.",
+      "Rung 2 or higher, no open default, at most 3 people behind one holder, at most 3 people per voucher, at most 50 USDT staked behind one holder.",
     unlock:
       "A stake can be taken back whenever the person has no open loan. If their loan is written off, what is left of your stake stays locked until they pay what they owe.",
     agentPath: "Through your agent",

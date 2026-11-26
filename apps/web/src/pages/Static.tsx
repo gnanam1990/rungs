@@ -35,7 +35,7 @@ export function LadderPage() {
           </table>
         </ScrollRegion>
       </section>
-      <section className="grid-3">
+      <section className="grid-2">
         <div className="card stack-sm">
           <h3>{S.ladder.probationTitle}</h3>
           <p className="muted">{S.ladder.probation}</p>
@@ -62,7 +62,7 @@ export function VouchPage() {
         <h1 id="t">{S.vouch.title}</h1>
         <p className="muted">{S.vouch.intro}</p>
       </section>
-      <section className="grid-3">
+      <section className="grid-2">
         <div className="card stack-sm">
           <h3>{S.vouch.lossTitle}</h3>
           <ol className="steps">
@@ -86,8 +86,7 @@ export function VouchPage() {
           </label>
           <input
             id={bId}
-            className="mono"
-            style={{ width: "100%", maxWidth: "460px" }}
+            className="mono input-wide"
             value={borrower}
             onChange={(e) => setBorrower(e.target.value)}
             placeholder="0x…"

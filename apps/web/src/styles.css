@@ -154,6 +154,11 @@ main.wrap {
   gap: 8px;
   min-width: 0;
 }
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -164,13 +169,26 @@ main.wrap {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
+/* Cards in one row stretch to the same height; every card grid uses the same 16px gap. */
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: start;
+  gap: 16px;
+  align-items: stretch;
+}
+/* A card whose last block (a prompt) grows to the card's bottom, so boxes in a row end on one line. */
+.card-fill {
+  display: flex;
+  flex-direction: column;
+}
+.card-fill > :last-child {
+  flex: 1;
+}
+.card-fill > .prompt:last-child {
+  grid-template-rows: auto 1fr;
 }
 @media (max-width: 900px) {
+  .grid-2,
   .grid-3,
   .split {
     grid-template-columns: minmax(0, 1fr);
@@ -242,20 +260,22 @@ main.wrap {
 }
 
 /* ---------- address field ---------- */
+/* Label above, then the box and its button on one centre line, then any error. */
 .addr {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-.addr .addr-field {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   min-width: 0;
-  flex: 1 1 260px;
+}
+.addr-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
 }
 .addr input {
+  flex: 1 1 auto;
+  min-width: 0;
   width: 100%;
   min-height: 44px;
   background: var(--surface);
@@ -504,6 +524,10 @@ main.wrap {
   gap: 8px;
   align-items: center;
   min-width: 0;
+}
+.stepper input.input-wide {
+  flex: 1 1 100%;
+  max-width: 480px;
 }
 .stepper input {
   width: 120px;
