@@ -53,19 +53,25 @@ describe("site answers", () => {
     expect((await checkSite(fake(ok), "https://rungs.xyz")).ok).toBe(true);
   });
   it("fails and names the path that did not load", async () => {
-    const r = await checkSite(fake({ ...ok, "https://rungs.xyz/skill.md": [502, "bad"] }), "https://rungs.xyz/");
+    const r = await checkSite(
+      fake({ ...ok, "https://rungs.xyz/skill.md": [502, "bad"] }),
+      "https://rungs.xyz/",
+    );
     expect(r).toMatchObject({ ok: false, detail: expect.stringContaining("/skill.md") });
   });
 });
 
 describe("keeper answers on mainnet", () => {
-  const cfg = (o: object) => ({ "https://rungs.xyz/v1/config": [200, JSON.stringify(o)] }) as Record<string, [number, string]>;
+  const cfg = (o: object) =>
+    ({ "https://rungs.xyz/v1/config": [200, JSON.stringify(o)] }) as Record<string, [number, string]>;
   it("passes with chain 56 and a pool address, and returns the pool", async () => {
     const r = await checkKeeper(fake(cfg({ chainId: 56, pool: POOL })), "https://rungs.xyz");
     expect(r).toMatchObject({ ok: true, pool: POOL });
   });
   it("fails on another chain, no pool, or no answer", async () => {
-    expect((await checkKeeper(fake(cfg({ chainId: 31337, pool: POOL })), "https://rungs.xyz")).ok).toBe(false);
+    expect((await checkKeeper(fake(cfg({ chainId: 31337, pool: POOL })), "https://rungs.xyz")).ok).toBe(
+      false,
+    );
     expect((await checkKeeper(fake(cfg({ chainId: 56, pool: null })), "https://rungs.xyz")).ok).toBe(false);
     expect((await checkKeeper(fake({}), "https://rungs.xyz")).ok).toBe(false);
   });
@@ -74,12 +80,13 @@ describe("keeper answers on mainnet", () => {
 describe("contract verified on BscScan (Etherscan V2 API)", () => {
   const url = `https://api.etherscan.io/v2/api?chainid=56&module=contract&action=getsourcecode&address=${POOL}&apikey=${KEY}`;
   const answer = (src: string, name: string) =>
-    ({ [url]: [200, JSON.stringify({ status: "1", result: [{ SourceCode: src, ContractName: name }] })] }) as Record<
-      string,
-      [number, string]
-    >;
+    ({
+      [url]: [200, JSON.stringify({ status: "1", result: [{ SourceCode: src, ContractName: name }] })],
+    }) as Record<string, [number, string]>;
   it("passes when RungsPool's source is published", async () => {
-    expect((await checkVerified(fake(answer("contract RungsPool {}", "RungsPool")), KEY, POOL)).ok).toBe(true);
+    expect((await checkVerified(fake(answer("contract RungsPool {}", "RungsPool")), KEY, POOL)).ok).toBe(
+      true,
+    );
   });
   it("fails when the source is empty or it is another contract", async () => {
     expect((await checkVerified(fake(answer("", "")), KEY, POOL)).ok).toBe(false);
@@ -101,23 +108,42 @@ describe("contract verified on BscScan (Etherscan V2 API)", () => {
 });
 
 describe("holders (team wallets excluded)", () => {
-  const stats = (n: number) => ({ "https://rungs.xyz/v1/stats": [200, JSON.stringify({ excludingTeam: { holders: n } })] }) as Record<string, [number, string]>;
+  const stats = (n: number) =>
+    ({ "https://rungs.xyz/v1/stats": [200, JSON.stringify({ excludingTeam: { holders: n } })] }) as Record<
+      string,
+      [number, string]
+    >;
   it(`passes at ${MIN_HOLDERS} or more`, async () => {
     expect((await checkHolders(fake(stats(MIN_HOLDERS)), "https://rungs.xyz")).ok).toBe(true);
   });
   it("fails below, and says how many", async () => {
-    expect(await checkHolders(fake(stats(12)), "https://rungs.xyz")).toMatchObject({ ok: false, detail: expect.stringContaining("12") });
+    expect(await checkHolders(fake(stats(12)), "https://rungs.xyz")).toMatchObject({
+      ok: false,
+      detail: expect.stringContaining("12"),
+    });
   });
 });
 
 describe("README headings", () => {
   it("lists what the build pack requires", () => {
     expect(README_HEADINGS).toEqual(
-      expect.arrayContaining(["What is live", "What is not live", "Owner permissions", "Trust assumptions", "Known limits", "Risk notice", "What is proven", "Demo video"]),
+      expect.arrayContaining([
+        "What is live",
+        "What is not live",
+        "Owner permissions",
+        "Trust assumptions",
+        "Known limits",
+        "Risk notice",
+        "What is proven",
+        "Demo video",
+      ]),
     );
   });
   it("fails and names each missing heading", () => {
-    expect(checkReadme("# Rungs\n## What is live\n")).toMatchObject({ ok: false, detail: expect.stringContaining("Risk notice") });
+    expect(checkReadme("# Rungs\n## What is live\n")).toMatchObject({
+      ok: false,
+      detail: expect.stringContaining("Risk notice"),
+    });
   });
   it("today's README is missing only the demo video (recorded by the owner in M10)", () => {
     expect(checkReadme(read("README.md")).detail).toBe("missing: Demo video");
@@ -133,6 +159,10 @@ describe("no banned phrase in user-facing text (red line 7)", () => {
   });
   it("today's user-facing files are clean", () => {
     const files = Object.fromEntries(USER_FACING_FILES.map((f) => [f, read(f)]));
-    expect(checkCopy(files)).toEqual({ name: "copy", ok: true, detail: `${USER_FACING_FILES.length} files clean` });
+    expect(checkCopy(files)).toEqual({
+      name: "copy",
+      ok: true,
+      detail: `${USER_FACING_FILES.length} files clean`,
+    });
   });
 });

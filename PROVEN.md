@@ -207,3 +207,19 @@ The mainnet steps themselves are in `docs/M04-RUNBOOK.md` and are the owner's.
 | `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 45 (+1 fork skipped), skill 24, web 5, keeper 24 |
 | `forge test` | 0 | 90 passed, 2 skipped (fork); no contract change |
 | `pnpm --filter @rungs/web e2e` | 0 | 148 passed (was 134), 34 skipped (screenshots only with `SCREENSHOTS=1`) |
+
+## M10 prep (offline): one-service hosting, `pnpm check:submission`, `pnpm submission:fill`
+
+| Command | Exit | Result |
+|---|---|---|
+| `vitest run test/static.test.ts` (keeper), before the code | 1 | 5 failed: no `webDist`, `/` answered 404 |
+| same, after | 0 | 10 passed: page and page routes get `index.html`; hashed assets cached a year; `/v1/*`, `/llms.txt`, `/skill.md` untouched; four path tricks never reach a file outside `WEB_DIST`; the host's `PORT` is used when `KEEPER_PORT` is unset |
+| `vitest run` (submission), before the code | 1 | `../src/checks` and `../src/fill` do not exist |
+| same, after | 0 | 20 passed; on today's repo the README check reports only `missing: Demo video` and all 11 user-facing files are free of banned phrases |
+| `SITE_URL= pnpm check:submission` | 1 | 6 of 7 checks fail, as they must before launch (no site, keeper, verified pool or holders; no demo video); `copy` passes |
+| `pnpm submission:fill` against the local anvil keeper | 1 | refused: "The keeper is on chain 31337 … fill only from mainnet." |
+| `pnpm lint && pnpm typecheck && pnpm test` | 0 | core 94, chain 45 (+1 fork skipped), skill 24, submission 20, web 5, keeper 34 |
+| `forge test` | 0 | 90 passed, 2 skipped (fork) |
+| `pnpm --filter @rungs/web e2e` | 0 | 148 passed |
+
+Not run on this machine: `docker build` (Docker is not installed here). The new CI job `docker` builds the image and checks the page, a page route, `/llms.txt`, `/skill.md` and `/v1/public/site` from the running container; its result is on the pull request.

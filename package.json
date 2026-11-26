@@ -10,7 +10,9 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "build": "pnpm -r --if-present build",
-    "e2e": "pnpm --filter @rungs/web e2e"
+    "e2e": "pnpm --filter @rungs/web e2e",
+    "check:submission": "pnpm --filter @rungs/submission check",
+    "submission:fill": "pnpm --filter @rungs/submission fill"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

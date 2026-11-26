@@ -10,7 +10,8 @@ import { openDb } from "../src/db";
 import { loadConfig } from "../src/env";
 import { createApp } from "../src/server";
 
-const INDEX = '<!doctype html><html><head><title>Rungs</title></head><body><div id="root"></div></body></html>';
+const INDEX =
+  '<!doctype html><html><head><title>Rungs</title></head><body><div id="root"></div></body></html>';
 
 function app(webDist: string | null) {
   const config = { ...loadConfig({}), pool: null, webDist };
@@ -39,7 +40,13 @@ describe("the keeper serves the built site from WEB_DIST", () => {
   });
 
   it("answers every page route with index.html (the app routes in the browser)", async () => {
-    for (const p of ["/line/0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "/ladder", "/vouch", "/open", "/agents"]) {
+    for (const p of [
+      "/line/0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "/ladder",
+      "/vouch",
+      "/open",
+      "/agents",
+    ]) {
       const r = await app(dist).request(p);
       expect(r.status, p).toBe(200);
       expect(await r.text(), p).toBe(INDEX);
@@ -64,7 +71,12 @@ describe("the keeper serves the built site from WEB_DIST", () => {
   });
 
   it("never serves a file outside WEB_DIST", async () => {
-    for (const p of ["/../secret.txt", "/%2e%2e/secret.txt", "/assets/..%2f..%2fsecret.txt", "/..%5csecret.txt"]) {
+    for (const p of [
+      "/../secret.txt",
+      "/%2e%2e/secret.txt",
+      "/assets/..%2f..%2fsecret.txt",
+      "/..%5csecret.txt",
+    ]) {
       const r = await app(dist).request(p);
       expect(await r.text(), p).not.toContain("outside");
     }

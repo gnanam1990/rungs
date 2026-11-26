@@ -137,6 +137,9 @@ importers:
 
   packages/submission:
     dependencies:
+      '@rungs/chain':
+        specifier: workspace:*
+        version: link:../chain
       '@rungs/skill':
         specifier: workspace:*
         version: link:../skill
