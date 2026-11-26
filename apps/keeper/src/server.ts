@@ -23,6 +23,7 @@ import type { DB } from "./db";
 import type { KeeperConfig } from "./env";
 import { lineResponse, reviveArgs } from "./lines";
 import { decideSite, refuseWhileComingSoon } from "./site";
+import { siteHandler } from "./static";
 import { counts } from "./stats";
 
 export interface AppDeps {
@@ -313,6 +314,7 @@ export function createApp(deps: AppDeps) {
     c.body(renderLlms(readLlmsTemplate(), vars()), 200, { "content-type": "text/plain; charset=utf-8" }),
   );
 
+  if (config.webDist) app.get("*", siteHandler(config.webDist));
   app.notFound((c) => c.json({ error: "Not found." }, 404));
   return app;
 }

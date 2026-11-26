@@ -60,6 +60,7 @@ The keeper (`apps/keeper`) is a read cache and calldata helper. If it is wrong o
 - **Change RPC:** set `BSC_RPC_URL` and restart. If the new RPC refuses big log ranges, lower `LOG_CHUNK`; the indexer also halves the chunk on errors by itself.
 - **Team wallets:** list them in `TEAM_WALLETS`; `/v1/stats` reports every number with and without them.
 - **Data:** SQLite at `KEEPER_DB_PATH` (one small file). It stores chain events only: no IP addresses, no personal data.
+- **Hosting:** one service serves everything. The `Dockerfile` builds the site into the keeper image (`WEB_DIST`), so the site, `/v1/*`, `/llms.txt` and `/skill.md` share one domain with no proxy or CORS setup. Build with `--build-arg PUBLIC_URL=https://<your domain>` and mount a volume at `/data`. The keeper listens on the host's `PORT` when `KEEPER_PORT` is unset. It needs no secrets. CI builds and starts this image on every pull request.
 
 ## Licence
 MIT
